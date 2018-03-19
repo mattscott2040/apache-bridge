@@ -1,0 +1,26 @@
+{
+  "name": "apache-bridge",
+  "version": "0.1.0",
+  "description": "Start, stop, and configure Apache via Node.",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mattscott2040/apache-bridge.git"
+  },
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matt Scott",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^9.4.6",
+    "typescript": "^2.7.2"
+  },
+  "dependencies": {
+    "@types/cross-spawn": "^6.0.0",
+    "commander": "^2.15.0",
+    "cross-spawn": "^6.0.5"
+  }
+}
