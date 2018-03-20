@@ -6,6 +6,7 @@
 ## Table of Contents
 
 * [Background](#background)
+* [Installation](#installation)
 * [Basic Usage](#basic-usage)
 * [Advanced Usage](#advanced-usage)
 * [Documentation](#documentation)
@@ -51,6 +52,20 @@ server.listen(80, 'localhost', callback);
 var apache = require('apache-bridge');
 var server = apache.createServer(confListener);
 server.listen(80, 'localhost', callback);
+```
+
+## Installation
+
+Install and inject into `package.json` as a `devDependency`:
+
+```bash
+npm install apache-bridge --save-dev
+```
+
+or install globally:
+
+```bash
+npm install -g apache-bridge
 ```
 
 ## Basic Usage
