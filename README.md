@@ -105,7 +105,7 @@ server.close(function(err) {
 
 ## Advanced Usage
 
-The server configuration can be manipulated on the fly by adding a listener to the [`'configure'`](#event-configure) event:
+The server configuration can be manipulated on the fly by adding a listener to the ['configure'](#event-configure) event:
 
 ```javascript
 var path = require('path');
@@ -165,7 +165,7 @@ var server = apache.createServer(function(conf) {
 });
 ```
 
-This is the recommended way to manipulate the [`server.conf`](#class-apacheconf) property.
+This is the recommended way to manipulate the [server.conf](#class-apacheconf) property.
 
 #### Event: 'error'
 
@@ -178,7 +178,7 @@ The `'error'` event is emitted whenever:
 
 #### Event: 'listening'
 
-Emitted when the server has been bound after calling [`server.listen()`](#serverlistenport-hostname-callback).
+Emitted when the server has been bound after calling [server.listen()](#serverlistenport-hostname-callback).
 
 ```javascript
 server.on('listening', function() {
@@ -211,11 +211,11 @@ server.close(function(err) {
 
 #### server.conf
 
-- `<conf.Conf>`
+- `<apache.Conf>`
 
-Instance of [conf.Conf](#class-apacheconf) class to be used at startup. 
+Instance of [apache.Conf](#class-apacheconf) class to be used at startup. 
 
-*Note*: The recommended way to manipulate the [`server.conf`](#class-apacheconf) property is by assigning a listener to the [`configure`](#event-configure) event.
+*Note*: The recommended way to manipulate the [server.conf](#class-apacheconf) property is by assigning a listener to the ['configure'](#event-configure) event.
 
 #### server.listen([port][, hostname][, callback])
 
