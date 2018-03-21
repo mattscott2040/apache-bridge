@@ -44,14 +44,14 @@ This project allows the use of Node-based build tools to develop Apache-based we
 // http module
 var http = require('http');
 var server = http.createServer(requestListener);
-server.listen(80, 'localhost', callback);
+server.listen(8000, 'localhost', callback);
 ```
 
 ```javascript
 // apache-bridge module
 var apache = require('apache-bridge');
 var server = apache.createServer(confListener);
-server.listen(80, 'localhost', callback);
+server.listen(8000, 'localhost', callback);
 ```
 
 ## Installation
@@ -86,8 +86,8 @@ server.bin = '/path/to/apache/bin';
 ### Start server
 
 ```javascript
-server.listen(80, 'localhost', function() {
-    // Apache is ready!
+server.listen(8000, 'localhost', function() {
+    // Apache is listening on localhost:8000!
 });
 ```
 
@@ -227,7 +227,7 @@ Instance of [apache.Conf](#class-apacheconf) class to be used at startup.
 Start an Apache server listening for connections on the given `port` and `host`.
 
 ```javascript
-server.listen(80, 'localhost', function() {
+server.listen(8000, 'localhost', function() {
     // Apache is ready!
 });
 ```
