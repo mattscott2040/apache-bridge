@@ -32,8 +32,8 @@ export const createServer = (callback?: (conf: conf.Conf) => void): Server => {
 export class Server extends events.EventEmitter {
 
     bin: string;
-    conf: conf.Conf;
     listening: boolean;
+    _conf: conf.Conf;
     _starting: boolean;
     _stopping: boolean;
     _process: any;
@@ -55,7 +55,7 @@ export class Server extends events.EventEmitter {
         super();
         
         this.bin = '';
-        this.conf = conf.createConf();
+        this._conf = conf.createConf();
         this.listening = false;
 
         this._starting = false;
@@ -142,7 +142,7 @@ export class Server extends events.EventEmitter {
             // These help keep Apache bound to the Node process
             args.push('-X', '-DNO_DETACH');
             
-            args = args.concat(this.conf.toArray());
+            args = args.concat(this._conf.toArray());
 
             if(this.bin) {
                 httpdPath = path.join(this.bin, httpdPath);
@@ -287,11 +287,11 @@ export class Server extends events.EventEmitter {
                 if(err) {
                     this.emit('error', err);
                 } else if(!success) {
-                    this.conf.once('finished', run);
+                    this._conf.once('finished', run);
                     if(!this.listenerCount('configure')) {
                         this.once('configure', (conf) => conf.end());
                     }
-                    this.emit('configure', this.conf);
+                    this.emit('configure', this._conf);
                 } else {
                     this.emit('error', 'Address already in use: ' + hostname + ':' + port)
                 }

@@ -18,7 +18,6 @@
      * [Event: 'listening'](#event-listening)
      * [server.bin](#serverbin)
      * [server.close([callback])](#serverclosecallback)
-     * [server.conf](#serverconf)
      * [server.listen([port][, hostname][, callback])](#serverlistenport-hostname-callback)
      * [server.listening](#serverlistening)
 
@@ -168,8 +167,6 @@ var server = apache.createServer(function(conf) {
 });
 ```
 
-This is the recommended way to manipulate the [server.conf](#class-apacheconf) property.
-
 #### Event: 'error'
 
 - `<Error>`
@@ -211,14 +208,6 @@ server.close(function(err) {
     }
 });
 ```
-
-#### server.conf
-
-- `<apache.Conf>`
-
-Instance of [apache.Conf](#class-apacheconf) class to be used at startup. 
-
-*Note*: The recommended way to manipulate the [server.conf](#class-apacheconf) property is by assigning a listener to the ['configure'](#event-configure) event.
 
 #### server.listen([port][, hostname][, callback])
 
