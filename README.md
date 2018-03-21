@@ -70,7 +70,7 @@ npm install -g apache-bridge
 
 ## Basic Usage
 
-### Create Apache object
+### Create instance of Server class
 
 ```javascript
 var apache = require('apache-bridge');
@@ -115,15 +115,18 @@ var server = apache.createServer(function(conf) {
         .include(path.resolve('./conf/extra/file.conf'))
         .end();
 });
+server.listen(8000);
 ```
 
 The snippet above sets Apache's default config file to the one found at `/path/to/httpd.conf` and adds the following directives:
 
+*Processed before httpd.conf:*
 ```apache
-# Processed before httpd.conf:
 Define docroot /path/to/src
+```
 
-# Processed after httpd.conf:
+*Processed after httpd.conf:*
+```apache
 Include /path/to/conf/extra/file.conf
 ```
 
