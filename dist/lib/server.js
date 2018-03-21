@@ -51,7 +51,7 @@ var Server = /** @class */ (function (_super) {
     function Server(callback) {
         var _this = _super.call(this) || this;
         _this.bin = '';
-        _this.conf = conf.createConf();
+        _this._conf = conf.createConf();
         _this.listening = false;
         _this._starting = false;
         _this._stopping = false;
@@ -122,7 +122,7 @@ var Server = /** @class */ (function (_super) {
             }
             // These help keep Apache bound to the Node process
             args.push('-X', '-DNO_DETACH');
-            args = args.concat(_this.conf.toArray());
+            args = args.concat(_this._conf.toArray());
             if (_this.bin) {
                 httpdPath = path.join(_this.bin, httpdPath);
             }
@@ -251,11 +251,11 @@ var Server = /** @class */ (function (_super) {
                     _this.emit('error', err);
                 }
                 else if (!success) {
-                    _this.conf.once('finished', run);
+                    _this._conf.once('finished', run);
                     if (!_this.listenerCount('configure')) {
                         _this.once('configure', function (conf) { return conf.end(); });
                     }
-                    _this.emit('configure', _this.conf);
+                    _this.emit('configure', _this._conf);
                 }
                 else {
                     _this.emit('error', 'Address already in use: ' + hostname + ':' + port);

@@ -22,8 +22,8 @@ export declare const createServer: (callback?: ((conf: conf.Conf) => void) | und
  * */
 export declare class Server extends events.EventEmitter {
     bin: string;
-    conf: conf.Conf;
     listening: boolean;
+    _conf: conf.Conf;
     _starting: boolean;
     _stopping: boolean;
     _process: any;
