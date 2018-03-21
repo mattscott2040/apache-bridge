@@ -153,7 +153,7 @@ var Conf = /** @class */ (function (_super) {
     Conf.prototype.toArray = function () {
         var args = this._arguments;
         if (!this.file) {
-            args.push('-f', path.resolve('conf/blank.conf'));
+            args.push('-f', path.join(__dirname, '..', 'conf', 'blank.conf'));
         }
         else if (typeof this.file === 'string') {
             args.push('-f', path.resolve(this.file));
