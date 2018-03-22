@@ -9,6 +9,7 @@
 * [Installation](#installation)
 * [Basic Usage](#basic-usage)
 * [Advanced Usage](#advanced-usage)
+* [Extensions](#extensions)
 * [Documentation](#documentation)
    * [apache.createServer([confListener])](#apachecreateserverconflistener)
    * [Class: apache.Server](#class-apacheserver)
@@ -144,6 +145,21 @@ Include /path/to/conf/extra/file.conf
 See [apache.Conf](#class-apacheconf) for more details about configuration options.
 
 See [Apache documentation](https://httpd.apache.org/docs/2.4/mod/core.html) for more details about configuration directives.
+
+## Extensions
+
+The following other libraries are built using `apache-bridge`:
+
+- [apache-webpack-plugin](https://github.com/mattscott2040/apache-webpack-plugin) -  Start Apache via `webpack-dev-server`.
+
+### Coming soon
+
+- `apache-connect` - Configureware for Node `apache-bridge`.
+- `grunt-apache` - Start an Apache web server via `grunt`.
+- `grunt-apache-connect` - Start an `apache-connect` web server via `grunt`.
+- `gulp-apache` - Start an Apache web server via `gulp`.
+- `grunt-apache-connect` - Start an `apache-connect` web server via `gulp`.
+
 
 ## Documentation
 
