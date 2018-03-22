@@ -89,10 +89,6 @@ You can also manually add the path to `process.env.PATH`:
 
 ```javascript
 process.env.PATH = '/path/to/apache/bin:' + process.env.PATH;
-
-module.exports = {
-    // ...
-}
 ```
 
 ### Start server
