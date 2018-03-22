@@ -158,8 +158,7 @@ The following other libraries are built using `apache-bridge`:
 - `grunt-apache` - Start an Apache web server via `grunt`.
 - `grunt-apache-connect` - Start an `apache-connect` web server via `grunt`.
 - `gulp-apache` - Start an Apache web server via `gulp`.
-- `grunt-apache-connect` - Start an `apache-connect` web server via `gulp`.
-
+- `gulp-apache-connect` - Start an `apache-connect` web server via `gulp`.
 
 ## Documentation
 
