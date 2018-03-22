@@ -76,10 +76,22 @@ var apache = require('apache-bridge');
 var server = apache.createServer();
 ```
 
+### Set path to Apache
+
 If the path to your Apache `httpd` file is not inclued in your `$PATH` environment variable, you can specify the path explicitly via [server.bin](#serverbin):
 
 ```javascript
 server.bin = '/path/to/apache/bin';
+```
+
+You can also manually add the path to `process.env.PATH`:
+
+```javascript
+process.env.PATH = '/path/to/apache/bin:' + process.env.PATH;
+
+module.exports = {
+    // ...
+}
 ```
 
 ### Start server
