@@ -146,15 +146,13 @@ See [Apache documentation](https://httpd.apache.org/docs/2.4/mod/core.html) for 
 
 The following other libraries are built using `apache-bridge`:
 
+- [apache-connect](https://github.com/mattscott2040/apache-connect) - Configureware for Node `apache-bridge`.
 - [apache-webpack-plugin](https://github.com/mattscott2040/apache-webpack-plugin) -  Start Apache via `webpack-dev-server`.
 
 ### Coming soon
 
-- `apache-connect` - Configureware for Node `apache-bridge`.
-- `grunt-apache` - Start an Apache web server via `grunt`.
-- `grunt-apache-connect` - Start an `apache-connect` web server via `grunt`.
-- `gulp-apache` - Start an Apache web server via `gulp`.
-- `gulp-apache-connect` - Start an `apache-connect` web server via `gulp`.
+- `grunt-apache-connect` - Start an Apache web server via `grunt` and `apache-connect`.
+- `gulp-apache-connect` - Start an Apache web server via `gulp` and `apache-connect`.
 
 ## Documentation
 
