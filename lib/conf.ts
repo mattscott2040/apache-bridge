@@ -74,6 +74,10 @@ export class Conf extends events.EventEmitter {
         const allowedFlags = ['-d','-f','-C','-c','-D','-e','-E','-T','-X','-k','-n','-w'];
         let sanitizedArg;
 
+        if(arg) {
+            sanitizedArg = capitalize(arg.replace(/^-*(.*)$/, "$1").replace(/\"/g, '\\"'));
+        }
+    
         if(this.finished) {
             return this;
         }
@@ -82,10 +86,6 @@ export class Conf extends events.EventEmitter {
             return this;
         }
         
-        if(arg) {
-            sanitizedArg = capitalize(arg.replace(/^-*(.*)$/, "$1"));
-        }
-    
         if(flag !== 'T' && flag !== 'w' && !sanitizedArg) {
             if(arg) {
                 throw new Error('The flag `' + flag + '` requires an argument, but `' + arg + '` is invalid.');
@@ -97,7 +97,7 @@ export class Conf extends events.EventEmitter {
         this._arguments.push(flag);
     
         if(sanitizedArg) {
-            this._arguments.push(sanitizedArg);
+            this._arguments.push('"' + sanitizedArg + '"');
         }
     
         return this;
