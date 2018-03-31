@@ -20,11 +20,12 @@ import ping = require('./ping');
 /**
  * Create a new Apache config.
  * @return {Conf}
+ * @param {Conf~confListener} callback
  * @public
  */
 
-export const createConf = (): Conf => {
-    return new Conf();
+export const createConf = (callback?: () => void): Conf => {
+    return new Conf(callback);
 }
 
 /** 
