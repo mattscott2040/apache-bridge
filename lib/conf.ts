@@ -110,11 +110,20 @@ export class Conf extends events.EventEmitter {
     }
     
      /**
-     * Get startup arguments.
+     * Alias for getArguments() - To be deprecated in v1.x
      * @public
      */
 
     toArray () {
+        return this.getArguments();
+    }
+
+     /**
+     * Get startup arguments.
+     * @public
+     */
+
+    getArguments () {
         let args = this._arguments;
         if(this.file === false) {
             args.push('-f', path.join(__dirname, '../..', 'conf', 'blank.conf'));

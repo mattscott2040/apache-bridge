@@ -143,7 +143,7 @@ export class Server extends events.EventEmitter {
             // These help keep Apache bound to the Node process
             args.push('-X', '-DNO_DETACH');
             
-            args = args.concat(this._conf.toArray());
+            args = args.concat(this._conf.getArguments());
 
             if(this.bin) {
                 httpdPath = path.join(this.bin, httpdPath);
