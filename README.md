@@ -21,7 +21,7 @@
      * [server.close([callback])](#serverclosecallback)
      * [server.listen([port][, hostname][, callback])](#serverlistenport-hostname-callback)
      * [server.listening](#serverlistening)
-
+   * [apache.createConf([finishedListener])](#apachecreateconffinishedlistener)
    * [Class: apache.Conf](#class-apacheconf)
      * [Event: 'finished'](#event-finished)
      * [conf.afterConf(directive)](#confafterconfdirective)
@@ -250,6 +250,11 @@ server.listen(8000, 'localhost', function() {
 - `<boolean>`
 
 A Boolean indicating whether or not the server is listening for connections.
+
+### apache.createConf([finishedListener])
+
+- `finishedListener` `<Function>` Called after `'finished'` event is emitted
+- Returns: [`<apache.Conf>`](#class-apacheconf)
 
 ### Class: apache.Conf
 
