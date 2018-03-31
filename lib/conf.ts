@@ -74,10 +74,9 @@ export class Conf extends events.EventEmitter {
      * Add a startup argument.
      * @param {string} flag
      * @param {string} [arg]
-     * @private
      */
 
-    _addArgument (flag: string, arg?: string) {
+    addArgument (flag: string, arg?: string) {
 
         const allowedFlags = ['-d','-f','-C','-c','-D','-e','-E','-T','-X','-k','-n','-w'];
         let sanitizedArg;
@@ -90,11 +89,11 @@ export class Conf extends events.EventEmitter {
             let msg = 'Could not add argument `' + flag;
             if(sanitizedArg) {
                 msg += ' ' + sanitizedArg;
-        }
+            }
             msg += '`: Configuration cannot be edited after conf.end() has been called.';
             throw new Error(msg);
         }
-    
+
         if(allowedFlags.indexOf(flag) === -1) {
             return this;
         }
@@ -141,7 +140,7 @@ export class Conf extends events.EventEmitter {
         return args;
     }
     
-     /**
+    /**
      * Add a directive to load before main config file (-C flag).
      * @param {string} directive
      * @public
@@ -155,7 +154,7 @@ export class Conf extends events.EventEmitter {
             if(!this._beforeConf) {
                 let file = tmp.fileSync().name;
                 this._beforeConf = fs.createWriteStream(file);
-                this._addArgument('-C', 'Include ' + file)
+                this.addArgument('-C', 'Include ' + file)
                     .on('finished', this._beforeConf.close);
             }
             this._beforeConf.write(directive + os.EOL);
@@ -192,7 +191,7 @@ export class Conf extends events.EventEmitter {
      */
 
     define = (parameter: string): Conf => {
-        return this._addArgument('-D', parameter);
+        return this.addArgument('-D', parameter);
     }
 
      /**
