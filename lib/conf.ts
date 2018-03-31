@@ -79,7 +79,12 @@ export class Conf extends events.EventEmitter {
         }
     
         if(this.finished) {
-            return this;
+            let msg = 'Could not add argument `' + flag;
+            if(sanitizedArg) {
+                msg += ' ' + sanitizedArg;
+        }
+            msg += '`: Configuration cannot be edited after conf.end() has been called.';
+            throw new Error(msg);
         }
     
         if(allowedFlags.indexOf(flag) === -1) {
@@ -126,6 +131,9 @@ export class Conf extends events.EventEmitter {
      */
 
     beforeConf = (directive: string): Conf => {
+        if(this.finished) {
+            throw new Error('Could not add directive `' + directive + '`: Configuration cannot be edited after conf.end() has been called.');
+        }
         return this._addArgument('-C', directive);
     }
 
@@ -136,6 +144,9 @@ export class Conf extends events.EventEmitter {
      */
 
     afterConf = (directive: string): Conf => {
+        if(this.finished) {
+            throw new Error('Could not add directive `' + directive + '`: Configuration cannot be edited after conf.end() has been called.');
+        }
         return this._addArgument('-c', directive);
     }
 
@@ -180,11 +191,11 @@ export class Conf extends events.EventEmitter {
      */
 
     end = (directive?: string) => {
-        if(this.finished) {
-            return;
-        }
         if(directive) {
             this.afterConf(directive);
+        }
+        if(this.finished) {
+            return;
         }
         this.finished = true;
         this.emit('finished');
