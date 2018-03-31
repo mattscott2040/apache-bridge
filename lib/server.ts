@@ -243,7 +243,7 @@ export class Server extends events.EventEmitter {
             this.once('listening', listeningHandler);
 
             // Spawn httpd child process
-            this._process = spawn(httpdPath, args);
+            this._process = spawn(httpdPath, args, {shell: true});
 
             // Handle early termination events
             this._process.once('error', abortHandler);
