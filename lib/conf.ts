@@ -65,7 +65,7 @@ export class Conf extends events.EventEmitter {
      /**
      * Add a startup argument.
      * @param {string} flag
-     * @param {string} [argument]
+     * @param {string} [arg]
      * @private
      */
 
