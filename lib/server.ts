@@ -1,5 +1,5 @@
 /*!
- * httpd
+ * server
  * Copyright(c) 2018 Matt Scott
  * MIT Licensed
  */
