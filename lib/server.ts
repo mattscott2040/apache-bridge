@@ -137,7 +137,7 @@ export class Server extends events.EventEmitter {
              * autolisten false.
              */
             if(autolisten) {
-                args.push('-c', 'Listen ' + hostname + ':' + port);
+                args.push('-c', '"Listen ' + hostname + ':' + port + '"');
             }
             
             // These help keep Apache bound to the Node process
