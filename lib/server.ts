@@ -18,6 +18,7 @@ import ping = require('./ping');
 /**
  * Create a new Apache server.
  * @return {Server}
+ * @param {Server~confListener} callback
  * @public
  */
 
