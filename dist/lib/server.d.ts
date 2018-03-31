@@ -1,6 +1,6 @@
 /// <reference types="node" />
 /*!
- * httpd
+ * server
  * Copyright(c) 2018 Matt Scott
  * MIT Licensed
  */
@@ -13,6 +13,7 @@ import conf = require('./conf');
 /**
  * Create a new Apache server.
  * @return {Server}
+ * @param {Server~confListener} callback
  * @public
  */
 export declare const createServer: (callback?: ((conf: conf.Conf) => void) | undefined) => Server;

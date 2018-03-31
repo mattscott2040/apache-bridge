@@ -12,16 +12,19 @@ import events = require('events');
 /**
  * Create a new Apache config.
  * @return {Conf}
+ * @param {Conf~confListener} callback
  * @public
  */
-export declare const createConf: () => Conf;
+export declare const createConf: (callback?: (() => void) | undefined) => Conf;
 /**
  * Class representing an Apache config.
  * @class
  * */
 export declare class Conf extends events.EventEmitter {
     private _arguments;
-    file: boolean | string;
+    private _beforeConf;
+    private _afterConf;
+    file: undefined | boolean | string | null;
     finished: boolean;
     /**
      * Callback for new Httpd().
@@ -36,20 +39,24 @@ export declare class Conf extends events.EventEmitter {
     /**
     * Add a startup argument.
     * @param {string} flag
-    * @param {string} [argument]
-    * @private
+    * @param {string} [arg]
     */
-    _addArgument(flag: string, arg?: string): this;
+    addArgument(flag: string, arg?: string): this;
     /**
-    * Get startup arguments.
+    * Alias for getArguments() - To be deprecated in v1.x
     * @public
     */
     toArray(): string[];
     /**
-    * Add a directive to load before main config file (-C flag).
-    * @param {string} directive
+    * Get startup arguments.
     * @public
     */
+    getArguments(): string[];
+    /**
+     * Add a directive to load before main config file (-C flag).
+     * @param {string} directive
+     * @public
+     */
     beforeConf: (directive: string) => Conf;
     /**
     * Add a directive to load after main config file (-c flag).

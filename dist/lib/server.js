@@ -1,6 +1,6 @@
 "use strict";
 /*!
- * httpd
+ * server
  * Copyright(c) 2018 Matt Scott
  * MIT Licensed
  */
@@ -27,6 +27,7 @@ var ping = require("./ping");
 /**
  * Create a new Apache server.
  * @return {Server}
+ * @param {Server~confListener} callback
  * @public
  */
 exports.createServer = function (callback) {
@@ -118,11 +119,11 @@ var Server = /** @class */ (function (_super) {
              * autolisten false.
              */
             if (autolisten) {
-                args.push('-c', 'Listen ' + hostname + ':' + port);
+                args.push('-c', '"Listen ' + hostname + ':' + port + '"');
             }
             // These help keep Apache bound to the Node process
             args.push('-X', '-DNO_DETACH');
-            args = args.concat(_this._conf.toArray());
+            args = args.concat(_this._conf.getArguments());
             if (_this.bin) {
                 httpdPath = path.join(_this.bin, httpdPath);
             }
@@ -211,7 +212,7 @@ var Server = /** @class */ (function (_super) {
             // Assign 'listening' event handler
             _this.once('listening', listeningHandler);
             // Spawn httpd child process
-            _this._process = spawn(httpdPath, args);
+            _this._process = spawn(httpdPath, args, { shell: true });
             // Handle early termination events
             _this._process.once('error', abortHandler);
             // Bubble up 'error' event

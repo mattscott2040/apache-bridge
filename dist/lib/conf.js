@@ -21,14 +21,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 var events = require("events");
 var path = require("path");
+var os = require("os");
+var tmp = require("tmp");
+var fs = require("fs");
 'use strict';
 /**
  * Create a new Apache config.
  * @return {Conf}
+ * @param {Conf~confListener} callback
  * @public
  */
-exports.createConf = function () {
-    return new Conf();
+exports.createConf = function (callback) {
+    return new Conf(callback);
 };
 /**
  * Class representing an Apache config.
@@ -48,12 +52,24 @@ var Conf = /** @class */ (function (_super) {
     function Conf(confListener) {
         var _this = _super.call(this) || this;
         /**
-        * Add a directive to load before main config file (-C flag).
-        * @param {string} directive
-        * @public
-        */
+         * Add a directive to load before main config file (-C flag).
+         * @param {string} directive
+         * @public
+         */
         _this.beforeConf = function (directive) {
-            return _this._addArgument('-C', directive);
+            if (_this.finished) {
+                throw new Error('Could not add directive `' + directive + '`: Configuration cannot be edited after conf.end() has been called.');
+            }
+            if (directive) {
+                if (!_this._beforeConf) {
+                    var file = tmp.fileSync().name;
+                    _this._beforeConf = fs.createWriteStream(file);
+                    _this.addArgument('-C', 'Include ' + file)
+                        .on('finished', _this._beforeConf.close);
+                }
+                _this._beforeConf.write(directive + os.EOL);
+            }
+            return _this;
         };
         /**
         * Add a directive to load after main config file (-c flag).
@@ -61,7 +77,19 @@ var Conf = /** @class */ (function (_super) {
         * @public
         */
         _this.afterConf = function (directive) {
-            return _this._addArgument('-c', directive);
+            if (_this.finished) {
+                throw new Error('Could not add directive `' + directive + '`: Configuration cannot be edited after conf.end() has been called.');
+            }
+            if (directive) {
+                if (!_this._afterConf) {
+                    var file = tmp.fileSync().name;
+                    _this._afterConf = fs.createWriteStream(file);
+                    _this.include(file)
+                        .on('finished', _this._afterConf.close);
+                }
+                _this._afterConf.write(directive + os.EOL);
+            }
+            return _this;
         };
         /**
         * Define a parameter (-D flag).
@@ -69,7 +97,7 @@ var Conf = /** @class */ (function (_super) {
         * @public
         */
         _this.define = function (parameter) {
-            return _this._addArgument('-D', parameter);
+            return _this.addArgument('-D', parameter);
         };
         /**
         * Include a file (after main config).
@@ -97,17 +125,19 @@ var Conf = /** @class */ (function (_super) {
         * @public
         */
         _this.end = function (directive) {
-            if (_this.finished) {
-                return;
-            }
             if (directive) {
                 _this.afterConf(directive);
+            }
+            if (_this.finished) {
+                return;
             }
             _this.finished = true;
             _this.emit('finished');
         };
         _this._arguments = [];
-        _this.file = true;
+        _this._beforeConf = null;
+        _this._afterConf = null;
+        _this.file;
         _this.finished = false;
         if (confListener) {
             _this.on('finish', confListener);
@@ -117,20 +147,24 @@ var Conf = /** @class */ (function (_super) {
     /**
     * Add a startup argument.
     * @param {string} flag
-    * @param {string} [argument]
-    * @private
+    * @param {string} [arg]
     */
-    Conf.prototype._addArgument = function (flag, arg) {
+    Conf.prototype.addArgument = function (flag, arg) {
         var allowedFlags = ['-d', '-f', '-C', '-c', '-D', '-e', '-E', '-T', '-X', '-k', '-n', '-w'];
         var sanitizedArg;
+        if (arg) {
+            sanitizedArg = capitalize(arg.replace(/^-*(.*)$/, "$1").replace(/\"/g, '\\"'));
+        }
         if (this.finished) {
-            return this;
+            var msg = 'Could not add argument `' + flag;
+            if (sanitizedArg) {
+                msg += ' ' + sanitizedArg;
+            }
+            msg += '`: Configuration cannot be edited after conf.end() has been called.';
+            throw new Error(msg);
         }
         if (allowedFlags.indexOf(flag) === -1) {
             return this;
-        }
-        if (arg) {
-            sanitizedArg = capitalize(arg.replace(/^-*(.*)$/, "$1"));
         }
         if (flag !== 'T' && flag !== 'w' && !sanitizedArg) {
             if (arg) {
@@ -142,17 +176,24 @@ var Conf = /** @class */ (function (_super) {
         }
         this._arguments.push(flag);
         if (sanitizedArg) {
-            this._arguments.push(sanitizedArg);
+            this._arguments.push('"' + sanitizedArg + '"');
         }
         return this;
+    };
+    /**
+    * Alias for getArguments() - To be deprecated in v1.x
+    * @public
+    */
+    Conf.prototype.toArray = function () {
+        return this.getArguments();
     };
     /**
     * Get startup arguments.
     * @public
     */
-    Conf.prototype.toArray = function () {
+    Conf.prototype.getArguments = function () {
         var args = this._arguments;
-        if (!this.file) {
+        if (this.file === false) {
             args.push('-f', path.join(__dirname, '../..', 'conf', 'blank.conf'));
         }
         else if (typeof this.file === 'string') {
