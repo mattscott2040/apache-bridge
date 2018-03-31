@@ -35,7 +35,7 @@ export class Conf extends events.EventEmitter {
 
     private _arguments: Array<string>;
 
-    file: boolean|string;
+    file: undefined|boolean|string|null;
     finished: boolean;
 
     /**
@@ -53,7 +53,7 @@ export class Conf extends events.EventEmitter {
 
         super();
         this._arguments = [];
-        this.file = true;
+        this.file;
         this.finished = false;
 
         if(confListener) {
@@ -116,7 +116,7 @@ export class Conf extends events.EventEmitter {
 
     toArray () {
         let args = this._arguments;
-        if(!this.file) {
+        if(this.file === false) {
             args.push('-f', path.join(__dirname, '../..', 'conf', 'blank.conf'));
         } else if(typeof this.file === 'string') {
             args.push('-f', path.resolve(this.file));
