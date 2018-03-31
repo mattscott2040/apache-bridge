@@ -321,9 +321,9 @@ Emits the ['finished'](#event-finished) event and sets [conf.finished](#conffini
 
 #### conf.file
 
-- `<boolean>` | `<string>`  Defaults to `true`.
+- `<boolean>` | `<string>` | `<null>`
 
-Boolean or string value that indicates whether Apache should load its default `httpd.conf` file (`true`), another config file (`string` path to config file), or no config at all (`false`).
+Boolean, string, or null value that indicates whether Apache should load its default `httpd.conf` file (`true`|`null`), another config file (`string` path to config file), or no config at all (`false`).
 
 #### conf.finished
 
