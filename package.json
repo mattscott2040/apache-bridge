@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "@types/cross-spawn": "^6.0.0",
-    "cross-spawn": "^6.0.5"
+    "@types/tmp": "0.0.33",
+    "cross-spawn": "^6.0.5",
+    "tmp": "0.0.33"
   }
 }

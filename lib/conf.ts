@@ -14,6 +14,9 @@
 import events = require('events');
 import path = require('path');
 import ping = require('./ping');
+import os = require('os');
+import tmp = require('tmp');
+import fs = require('fs');
 
 'use strict';
 
@@ -35,6 +38,8 @@ export const createConf = (callback?: () => void): Conf => {
 export class Conf extends events.EventEmitter {
 
     private _arguments: Array<string>;
+    private _beforeConf: null|fs.WriteStream;
+    private _afterConf: null|fs.WriteStream;
 
     file: undefined|boolean|string|null;
     finished: boolean;
@@ -54,6 +59,8 @@ export class Conf extends events.EventEmitter {
 
         super();
         this._arguments = [];
+        this._beforeConf = null;
+        this._afterConf = null;
         this.file;
         this.finished = false;
 
@@ -144,7 +151,16 @@ export class Conf extends events.EventEmitter {
         if(this.finished) {
             throw new Error('Could not add directive `' + directive + '`: Configuration cannot be edited after conf.end() has been called.');
         }
-        return this._addArgument('-C', directive);
+        if(directive) {
+            if(!this._beforeConf) {
+                let file = tmp.fileSync().name;
+                this._beforeConf = fs.createWriteStream(file);
+                this._addArgument('-C', 'Include ' + file)
+                    .on('finished', this._beforeConf.close);
+            }
+            this._beforeConf.write(directive + os.EOL);
+        }
+        return this;
     }
 
      /**
@@ -157,7 +173,16 @@ export class Conf extends events.EventEmitter {
         if(this.finished) {
             throw new Error('Could not add directive `' + directive + '`: Configuration cannot be edited after conf.end() has been called.');
         }
-        return this._addArgument('-c', directive);
+        if(directive) {
+            if(!this._afterConf) {
+                let file = tmp.fileSync().name;
+                this._afterConf = fs.createWriteStream(file);
+                this.include(file)
+                    .on('finished', this._afterConf.close);
+            }
+            this._afterConf.write(directive + os.EOL);
+        }
+        return this;
     }
 
      /**
