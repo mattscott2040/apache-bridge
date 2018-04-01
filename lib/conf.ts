@@ -186,7 +186,11 @@ export class Conf extends events.EventEmitter {
                 let file = tmp.fileSync().name;
                 this._directives = fs.createWriteStream(file);
                 this.include(file)
-                    .on('finished', this._directives.close);
+                    .on('finished', () => {
+                        if(this._directives) {
+                            this._directives.close;
+                        }
+                    });
             }
             this._directives.write(directive + os.EOL);
         }

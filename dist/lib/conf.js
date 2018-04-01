@@ -92,7 +92,11 @@ var Conf = /** @class */ (function (_super) {
                     var file = tmp.fileSync().name;
                     _this._directives = fs.createWriteStream(file);
                     _this.include(file)
-                        .on('finished', _this._directives.close);
+                        .on('finished', function () {
+                        if (_this._directives) {
+                            _this._directives.close;
+                        }
+                    });
                 }
                 _this._directives.write(directive + os.EOL);
             }
