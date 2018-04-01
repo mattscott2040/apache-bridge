@@ -1,6 +1,6 @@
 {
   "name": "apache-bridge",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Start, stop, and configure Apache via Node.",
   "main": "dist/index.js",
   "repository": {
