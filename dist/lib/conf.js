@@ -116,7 +116,7 @@ var Conf = /** @class */ (function (_super) {
         * @public
         */
         _this.include = function (file) {
-            return _this.afterConf('Include "' + path.resolve(file) + '"');
+            return _this.addDirective('Include "' + path.resolve(file) + '"');
         };
         /**
         * Load a module (after main config).
@@ -126,9 +126,9 @@ var Conf = /** @class */ (function (_super) {
         */
         _this.loadModule = function (module, file) {
             return _this
-                .afterConf('<IfModule !' + module + '>')
-                .afterConf('LoadModule ' + module + ' "' + file + '"')
-                .afterConf('</IfModule>');
+                .addDirective('<IfModule !' + module + '>')
+                .addDirective('LoadModule ' + module + ' "' + file + '"')
+                .addDirective('</IfModule>');
         };
         /**
         * Stop configuring (and optionally append a directive).

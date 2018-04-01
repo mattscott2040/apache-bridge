@@ -214,7 +214,7 @@ export class Conf extends events.EventEmitter {
      */
 
     include = (file: string): Conf => {
-        return this.afterConf('Include "' + path.resolve(file) + '"');
+        return this.addDirective('Include "' + path.resolve(file) + '"');
     }
 
      /**
@@ -226,9 +226,9 @@ export class Conf extends events.EventEmitter {
 
     loadModule = (module: string, file: string): Conf => {
         return this
-            .afterConf('<IfModule !' + module + '>')
-            .afterConf('LoadModule ' + module + ' "' + file + '"')
-            .afterConf('</IfModule>')
+            .addDirective('<IfModule !' + module + '>')
+            .addDirective('LoadModule ' + module + ' "' + file + '"')
+            .addDirective('</IfModule>')
     }
 
      /**
