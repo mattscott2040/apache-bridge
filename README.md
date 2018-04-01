@@ -25,8 +25,9 @@
    * [Class: apache.Conf](#class-apacheconf)
      * [Event: 'finished'](#event-finished)
      * [conf.addArgument(argument, value)](#confaddargumentargument-value)
-     * [conf.afterConf(directive)](#confafterconfdirective)
-     * [conf.beforeConf(directive)](#confbeforeconfdirective)
+     * [conf.addDirective(directive)](#confadddirectivedirective)
+     * ~~[conf.afterConf(directive)](#confafterconfdirective)~~ - *To be deprecrated in v1.x.x*
+     * ~~[conf.beforeConf(directive)](#confafterconfdirective)~~ - *To be deprecrated in v1.x.x*
      * [conf.define(parameter)](#confdefineparameter)
      * [conf.end(directive)](#confenddirective)
      * [conf.file](#conffile)
@@ -120,7 +121,7 @@ The server configuration can be manipulated on the fly by adding a listener to t
 var path = require('path');
 var server = apache.createServer(function(conf) {
     conf.file = '/path/to/httpd.conf');
-    conf.beforeConf('Define docroot ' . path.resolve('./src'));
+    conf.addDirective('Define docroot ' . path.resolve('./src'));
         .include(path.resolve('./conf/extra/file.conf'))
         .end();
 });
@@ -300,7 +301,7 @@ $ httpd -C "<If \"%{HTTP_HOST} == 'example.com'\">"
 
 See [Apache documentation](https://httpd.apache.org/docs/2.4/programs/httpd.html) for more details about runtime arguments.
 
-#### conf.afterConf(directive)
+#### conf.addDirective(directive)
 
 - `directive` `<string>`
 - Returns: `<apache.Conf>`
@@ -309,14 +310,17 @@ Process the configuration `directive` after reading [conf.file](#conffile).
 
 See [Apache documentation](https://httpd.apache.org/docs/2.4/mod/core.html) for more details about configuration directives.
 
-#### conf.beforeConf(directive)
+#### ~~conf.afterConf(directive)~~
 
-- `directive` `<string>`
-- Returns: `<apache.Conf>`
+*To be deprecated in v1.x.x.*
 
-Process the configuration `directive` before reading [conf.file](#conffile).
+Use [conf.addDirective()](#confadddirectivedirective) instead.
 
-See [Apache documentation](https://httpd.apache.org/docs/2.4/mod/core.html) for more details about configuration directives.
+#### ~~conf.beforeConf(directive)~~
+
+*To be deprecated in v1.x.x.*
+
+Use [conf.addDirective()](#confadddirectivedirective) instead. Use [conf.addArgument()](#confaddargumentargument-value) with `-C` argument, or alternatively set [conf.file](#conffile) to `false` and include later via [conf.include()](#confincludepath), to add directives prior to loading a config file.
 
 #### conf.define(parameter)
 
@@ -331,9 +335,9 @@ if(process.env.NODE_ENV === 'development') {
     conf.define('TEST');
 }
 
-conf.afterConf('<IfDefine TEST>')
-    .afterConf('Define servername test.example.com')
-    .afterConf('</IfDefine>');
+conf.addDirective('<IfDefine TEST>')
+    .addDirective('Define servername test.example.com')
+    .addDirective('</IfDefine>');
 ```
 
 ```apache

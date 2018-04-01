@@ -38,8 +38,8 @@ export const createConf = (callback?: () => void): Conf => {
 export class Conf extends events.EventEmitter {
 
     private _arguments: Array<string>;
-    private _beforeConf: null|fs.WriteStream;
-    private _afterConf: null|fs.WriteStream;
+    private _beforeConf: null|fs.WriteStream; // To be deprecated in v1.x
+    private _directives: null|fs.WriteStream;
 
     file: undefined|boolean|string|null;
     finished: boolean;
@@ -59,8 +59,8 @@ export class Conf extends events.EventEmitter {
 
         super();
         this._arguments = [];
-        this._beforeConf = null;
-        this._afterConf = null;
+        this._beforeConf = null; // To be deprecated in v1.x
+        this._directives = null;
         this.file;
         this.finished = false;
 
@@ -141,7 +141,7 @@ export class Conf extends events.EventEmitter {
     }
     
     /**
-     * Add a directive to load before main config file (-C flag).
+     * Add a directive to load before main config file (-C flag) - To be deprecated in v1.x
      * @param {string} directive
      * @public
      */
@@ -163,23 +163,32 @@ export class Conf extends events.EventEmitter {
     }
 
      /**
+     * Alias for addDirective() - To be deprecated in v1.x
+     * @public
+     */
+
+    afterConf = (directive: string): Conf => {
+        return this.addDirective(directive);
+    }
+
+     /**
      * Add a directive to load after main config file (-c flag).
      * @param {string} directive
      * @public
      */
 
-    afterConf = (directive: string): Conf => {
+    addDirective = (directive: string): Conf => {
         if(this.finished) {
             throw new Error('Could not add directive `' + directive + '`: Configuration cannot be edited after conf.end() has been called.');
         }
         if(directive) {
-            if(!this._afterConf) {
+            if(!this._directives) {
                 let file = tmp.fileSync().name;
-                this._afterConf = fs.createWriteStream(file);
+                this._directives = fs.createWriteStream(file);
                 this.include(file)
-                    .on('finished', this._afterConf.close);
+                    .on('finished', this._directives.close);
             }
-            this._afterConf.write(directive + os.EOL);
+            this._directives.write(directive + os.EOL);
         }
         return this;
     }
@@ -226,7 +235,7 @@ export class Conf extends events.EventEmitter {
 
     end = (directive?: string) => {
         if(directive) {
-            this.afterConf(directive);
+            this.addDirective(directive);
         }
         if(this.finished) {
             return;
