@@ -72,44 +72,44 @@ export class Conf extends events.EventEmitter {
 
      /**
      * Add a startup argument.
-     * @param {string} flag
-     * @param {string} [arg]
+     * @param {string} arg
+     * @param {string} [val]
      */
 
-    addArgument (flag: string, arg?: string) {
+    addArgument (arg: string, val?: string) {
 
-        const allowedFlags = ['-d','-f','-C','-c','-D','-e','-E','-T','-X','-k','-n','-w'];
-        let sanitizedArg;
+        const allowedArgs = ['-d','-f','-C','-c','-D','-e','-E','-T','-X','-k','-n','-w'];
+        let sanitizedVal;
 
-        if(arg) {
-            sanitizedArg = capitalize(arg.replace(/^-*(.*)$/, "$1").replace(/\"/g, '\\"'));
+        if(val) {
+            sanitizedVal = capitalize(val.replace(/^-*(.*)$/, "$1").replace(/\"/g, '\\"'));
         }
     
         if(this.finished) {
-            let msg = 'Could not add argument `' + flag;
-            if(sanitizedArg) {
-                msg += ' ' + sanitizedArg;
+            let msg = 'Could not add argument `' + arg;
+            if(sanitizedVal) {
+                msg += ' ' + sanitizedVal;
             }
             msg += '`: Configuration cannot be edited after conf.end() has been called.';
             throw new Error(msg);
         }
 
-        if(allowedFlags.indexOf(flag) === -1) {
+        if(allowedArgs.indexOf(arg) === -1) {
             return this;
         }
         
-        if(flag !== 'T' && flag !== 'w' && !sanitizedArg) {
-            if(arg) {
-                throw new Error('The flag `' + flag + '` requires an argument, but `' + arg + '` is invalid.');
+        if(arg !== 'T' && arg !== 'w' && !sanitizedVal) {
+            if(val) {
+                throw new Error('The argument `' + arg + '` requires an argument, but `' + val + '` is invalid.');
             } else {
-                throw new Error('The flag `' + flag + '` requires an argument, but none was given.');
+                throw new Error('The argument `' + arg + '` requires an argument, but none was given.');
             }
         }
     
-        this._arguments.push(flag);
+        this._arguments.push(arg);
     
-        if(sanitizedArg) {
-            this._arguments.push('"' + sanitizedArg + '"');
+        if(sanitizedVal) {
+            this._arguments.push('"' + sanitizedVal + '"');
         }
     
         return this;
