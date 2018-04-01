@@ -12,7 +12,7 @@ import events = require('events');
 /**
  * Create a new Apache config.
  * @return {Conf}
- * @param {Conf~confListener} callback
+ * @param {Conf~finishedListener} callback
  * @public
  */
 export declare const createConf: (callback?: (() => void) | undefined) => Conf;
@@ -23,25 +23,25 @@ export declare const createConf: (callback?: (() => void) | undefined) => Conf;
 export declare class Conf extends events.EventEmitter {
     private _arguments;
     private _beforeConf;
-    private _afterConf;
+    private _directives;
     file: undefined | boolean | string | null;
     finished: boolean;
     /**
-     * Callback for new Httpd().
-     * @callback Conf~confListener
+     * Callback for conf.end().
+     * @callback Conf~finishedListener
      */
     /**
      * Create a new Apache config.
-     * @param {Conf~confListener} confListener
+     * @param {Conf~finishedListener} callback
      * @constructor
      */
-    constructor(confListener?: () => void);
+    constructor(callback?: () => void);
     /**
     * Add a startup argument.
-    * @param {string} flag
-    * @param {string} [arg]
+    * @param {string} arg
+    * @param {string} [val]
     */
-    addArgument(flag: string, arg?: string): this;
+    addArgument(arg: string, val?: string): this;
     /**
     * Alias for getArguments() - To be deprecated in v1.x
     * @public
@@ -53,17 +53,22 @@ export declare class Conf extends events.EventEmitter {
     */
     getArguments(): string[];
     /**
-     * Add a directive to load before main config file (-C flag).
+     * Add a directive to load before main config file (-C flag) - To be deprecated in v1.x
      * @param {string} directive
      * @public
      */
     beforeConf: (directive: string) => Conf;
     /**
+    * Alias for addDirective() - To be deprecated in v1.x
+    * @public
+    */
+    afterConf: (directive: string) => Conf;
+    /**
     * Add a directive to load after main config file (-c flag).
     * @param {string} directive
     * @public
     */
-    afterConf: (directive: string) => Conf;
+    addDirective: (directive: string) => Conf;
     /**
     * Define a parameter (-D flag).
     * @param {string} parameter

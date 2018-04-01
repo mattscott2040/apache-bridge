@@ -28,7 +28,7 @@ var fs = require("fs");
 /**
  * Create a new Apache config.
  * @return {Conf}
- * @param {Conf~confListener} callback
+ * @param {Conf~finishedListener} callback
  * @public
  */
 exports.createConf = function (callback) {
@@ -41,18 +41,18 @@ exports.createConf = function (callback) {
 var Conf = /** @class */ (function (_super) {
     __extends(Conf, _super);
     /**
-     * Callback for new Httpd().
-     * @callback Conf~confListener
+     * Callback for conf.end().
+     * @callback Conf~finishedListener
      */
     /**
      * Create a new Apache config.
-     * @param {Conf~confListener} confListener
+     * @param {Conf~finishedListener} callback
      * @constructor
      */
-    function Conf(confListener) {
+    function Conf(callback) {
         var _this = _super.call(this) || this;
         /**
-         * Add a directive to load before main config file (-C flag).
+         * Add a directive to load before main config file (-C flag) - To be deprecated in v1.x
          * @param {string} directive
          * @public
          */
@@ -72,22 +72,29 @@ var Conf = /** @class */ (function (_super) {
             return _this;
         };
         /**
+        * Alias for addDirective() - To be deprecated in v1.x
+        * @public
+        */
+        _this.afterConf = function (directive) {
+            return _this.addDirective(directive);
+        };
+        /**
         * Add a directive to load after main config file (-c flag).
         * @param {string} directive
         * @public
         */
-        _this.afterConf = function (directive) {
+        _this.addDirective = function (directive) {
             if (_this.finished) {
                 throw new Error('Could not add directive `' + directive + '`: Configuration cannot be edited after conf.end() has been called.');
             }
             if (directive) {
-                if (!_this._afterConf) {
+                if (!_this._directives) {
                     var file = tmp.fileSync().name;
-                    _this._afterConf = fs.createWriteStream(file);
+                    _this._directives = fs.createWriteStream(file);
                     _this.include(file)
-                        .on('finished', _this._afterConf.close);
+                        .on('finished', _this._directives.close);
                 }
-                _this._afterConf.write(directive + os.EOL);
+                _this._directives.write(directive + os.EOL);
             }
             return _this;
         };
@@ -126,7 +133,7 @@ var Conf = /** @class */ (function (_super) {
         */
         _this.end = function (directive) {
             if (directive) {
-                _this.afterConf(directive);
+                _this.addDirective(directive);
             }
             if (_this.finished) {
                 return;
@@ -135,48 +142,48 @@ var Conf = /** @class */ (function (_super) {
             _this.emit('finished');
         };
         _this._arguments = [];
-        _this._beforeConf = null;
-        _this._afterConf = null;
+        _this._beforeConf = null; // To be deprecated in v1.x
+        _this._directives = null;
         _this.file;
         _this.finished = false;
-        if (confListener) {
-            _this.on('finish', confListener);
+        if (callback) {
+            _this.on('finished', callback);
         }
         return _this;
     }
     /**
     * Add a startup argument.
-    * @param {string} flag
-    * @param {string} [arg]
+    * @param {string} arg
+    * @param {string} [val]
     */
-    Conf.prototype.addArgument = function (flag, arg) {
-        var allowedFlags = ['-d', '-f', '-C', '-c', '-D', '-e', '-E', '-T', '-X', '-k', '-n', '-w'];
-        var sanitizedArg;
-        if (arg) {
-            sanitizedArg = capitalize(arg.replace(/^-*(.*)$/, "$1").replace(/\"/g, '\\"'));
+    Conf.prototype.addArgument = function (arg, val) {
+        var allowedArgs = ['-d', '-f', '-C', '-c', '-D', '-e', '-E', '-T', '-X', '-k', '-n', '-w'];
+        var sanitizedVal;
+        if (val) {
+            sanitizedVal = capitalize(val.replace(/^-*(.*)$/, "$1").replace(/\"/g, '\\"'));
         }
         if (this.finished) {
-            var msg = 'Could not add argument `' + flag;
-            if (sanitizedArg) {
-                msg += ' ' + sanitizedArg;
+            var msg = 'Could not add argument `' + arg;
+            if (sanitizedVal) {
+                msg += ' ' + sanitizedVal;
             }
             msg += '`: Configuration cannot be edited after conf.end() has been called.';
             throw new Error(msg);
         }
-        if (allowedFlags.indexOf(flag) === -1) {
+        if (allowedArgs.indexOf(arg) === -1) {
             return this;
         }
-        if (flag !== 'T' && flag !== 'w' && !sanitizedArg) {
-            if (arg) {
-                throw new Error('The flag `' + flag + '` requires an argument, but `' + arg + '` is invalid.');
+        if (arg !== 'T' && arg !== 'w' && !sanitizedVal) {
+            if (val) {
+                throw new Error('The argument `' + arg + '` requires an argument, but `' + val + '` is invalid.');
             }
             else {
-                throw new Error('The flag `' + flag + '` requires an argument, but none was given.');
+                throw new Error('The argument `' + arg + '` requires an argument, but none was given.');
             }
         }
-        this._arguments.push(flag);
-        if (sanitizedArg) {
-            this._arguments.push('"' + sanitizedArg + '"');
+        this._arguments.push(arg);
+        if (sanitizedVal) {
+            this._arguments.push('"' + sanitizedVal + '"');
         }
         return this;
     };
