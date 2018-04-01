@@ -91,7 +91,7 @@ var Conf = /** @class */ (function (_super) {
                 if (!_this._directives) {
                     var file = tmp.fileSync().name;
                     _this._directives = fs.createWriteStream(file);
-                    _this.include(file)
+                    _this.addArgument('-c', 'Include "' + path.resolve(file) + '"')
                         .on('finished', function () {
                         if (_this._directives) {
                             _this._directives.close;
