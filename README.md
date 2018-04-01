@@ -24,6 +24,7 @@
    * [apache.createConf([finishedListener])](#apachecreateconffinishedlistener)
    * [Class: apache.Conf](#class-apacheconf)
      * [Event: 'finished'](#event-finished)
+     * [conf.addArgument(argument, value)](#confaddargumentargument-value)
      * [conf.afterConf(directive)](#confafterconfdirective)
      * [conf.beforeConf(directive)](#confbeforeconfdirective)
      * [conf.define(parameter)](#confdefineparameter)
@@ -263,6 +264,41 @@ This class is used to configure Apache.
 #### Event: 'finished'
 
 Emitted after [conf.end()](#confenddirective) is called.
+
+#### conf.addArgument(argument[, value])
+
+- `argument` `<string>`
+  - Allowed flags: `-d`, `-f`, `-C`, `-c`, `-D`, `-e`, `-E`, `-T`,`-X`,`-k`, `-n`, `-w`
+- `value` `<string>`
+- Returns: `<apache.Conf>`
+
+Add `argument` with optional `value` to the `httpd` process at runtime:
+
+```javascript
+// addArgument()
+conf.addArgument('-c', 'Include /path/to/include/file.conf');
+```
+
+```bash
+# Command-line
+$ httpd -c "Include /path/to/include/file.conf"
+```
+
+*Note*: `value` will be wrapped in double-quotes. Any double-quotes in the provided `value` string will be automatically escaped:
+
+This:
+
+```javascript
+conf.addArgument('-C', '<If "%{HTTP_HOST} == \'example.com\'">');
+```
+
+will be converted to this:
+
+```bash
+$ httpd -C "<If \"%{HTTP_HOST} == 'example.com'\">"
+```
+
+See [Apache documentation](https://httpd.apache.org/docs/2.4/programs/httpd.html) for more details about runtime arguments.
 
 #### conf.afterConf(directive)
 
