@@ -41,7 +41,7 @@ export class Conf extends events.EventEmitter {
     private _beforeConf: null|fs.WriteStream; // To be deprecated in v1.x
     private _directives: null|fs.WriteStream;
 
-    path: undefined|boolean|string|null;
+    file: undefined|boolean|string|null;
     finished: boolean;
 
     /**
@@ -61,7 +61,7 @@ export class Conf extends events.EventEmitter {
         this._arguments = [];
         this._beforeConf = null; // To be deprecated in v1.x
         this._directives = null;
-        this.path;
+        this.file;
         this.finished = false;
 
         if(callback) {
@@ -132,10 +132,10 @@ export class Conf extends events.EventEmitter {
 
     getArguments () {
         let args = this._arguments;
-        if(this.path === false) {
+        if(this.file === false) {
             args.push('-f', path.join(__dirname, '../..', 'conf', 'blank.conf'));
-        } else if(typeof this.path === 'string') {
-            args.push('-f', path.resolve(this.path));
+        } else if(typeof this.file === 'string') {
+            args.push('-f', path.resolve(this.file));
         }
         return args;
     }
