@@ -23,7 +23,7 @@ import fs = require('fs');
 /**
  * Create a new Apache config.
  * @return {Conf}
- * @param {Conf~confListener} callback
+ * @param {Conf~finishedListener} callback
  * @public
  */
 
@@ -45,17 +45,17 @@ export class Conf extends events.EventEmitter {
     finished: boolean;
 
     /**
-     * Callback for new Httpd().
-     * @callback Conf~confListener
+     * Callback for conf.end().
+     * @callback Conf~finishedListener
      */
 
     /**
      * Create a new Apache config.
-     * @param {Conf~confListener} confListener
+     * @param {Conf~finishedListener} callback
      * @constructor
      */
 
-    constructor (confListener?: () => void) {
+    constructor (callback?: () => void) {
 
         super();
         this._arguments = [];
@@ -64,8 +64,8 @@ export class Conf extends events.EventEmitter {
         this.file;
         this.finished = false;
 
-        if(confListener) {
-            this.on('finish', confListener);
+        if(callback) {
+            this.on('finished', callback);
         }
 
     }
