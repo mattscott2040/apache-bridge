@@ -24,7 +24,7 @@ export declare class Conf extends events.EventEmitter {
     private _arguments;
     private _beforeConf;
     private _directives;
-    file: undefined | boolean | string | null;
+    path: undefined | boolean | string | null;
     finished: boolean;
     /**
      * Callback for conf.end().

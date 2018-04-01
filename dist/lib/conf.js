@@ -148,7 +148,7 @@ var Conf = /** @class */ (function (_super) {
         _this._arguments = [];
         _this._beforeConf = null; // To be deprecated in v1.x
         _this._directives = null;
-        _this.file;
+        _this.path;
         _this.finished = false;
         if (callback) {
             _this.on('finished', callback);
@@ -204,11 +204,11 @@ var Conf = /** @class */ (function (_super) {
     */
     Conf.prototype.getArguments = function () {
         var args = this._arguments;
-        if (this.file === false) {
+        if (this.path === false) {
             args.push('-f', path.join(__dirname, '../..', 'conf', 'blank.conf'));
         }
-        else if (typeof this.file === 'string') {
-            args.push('-f', path.resolve(this.file));
+        else if (typeof this.path === 'string') {
+            args.push('-f', path.resolve(this.path));
         }
         return args;
     };

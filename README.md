@@ -30,10 +30,11 @@
      * ~~[conf.beforeConf(directive)](#confafterconfdirective)~~ - *To be deprecrated in v1.x.x*
      * [conf.define(parameter)](#confdefineparameter)
      * [conf.end(directive)](#confenddirective)
-     * [conf.file](#conffile)
+     * ~~[conf.file](#conffile)~~ - *Deprecated in v0.2.2*
      * [conf.finished](#conffinished)
      * [conf.include(path)](#confincludepath)
      * [conf.loadModule(moduleName, modulePath)](#confloadmodulemodulename-modulepath)
+     * [conf.path](#confpath)
 
 ## Background
 
@@ -120,7 +121,7 @@ The server configuration can be manipulated on the fly by adding a listener to t
 ```javascript
 var path = require('path');
 var server = apache.createServer(function(conf) {
-    conf.file = '/path/to/httpd.conf');
+    conf.path = '/path/to/httpd.conf');
     conf.addDirective('Define docroot ' . path.resolve('./src'));
         .include(path.resolve('./conf/extra/file.conf'))
         .end();
@@ -306,7 +307,7 @@ See [Apache documentation](https://httpd.apache.org/docs/2.4/programs/httpd.html
 - `directive` `<string>`
 - Returns: `<apache.Conf>`
 
-Process the configuration `directive` after reading [conf.file](#conffile).
+Process the configuration `directive` after reading [conf.path](#confpath).
 
 See [Apache documentation](https://httpd.apache.org/docs/2.4/mod/core.html) for more details about configuration directives.
 
@@ -320,7 +321,7 @@ Use [conf.addDirective()](#confadddirectivedirective) instead.
 
 *To be deprecated in v1.x.x.*
 
-Use [conf.addDirective()](#confadddirectivedirective) instead. Use [conf.addArgument()](#confaddargumentargument-value) with `-C` argument, or alternatively set [conf.file](#conffile) to `false` and include later via [conf.include()](#confincludepath), to add directives prior to loading a config file.
+Use [conf.addDirective()](#confadddirectivedirective) instead. Use [conf.addArgument()](#confaddargumentargument-value) with `-C` argument, or alternatively set [conf.path](#confpath) to `false` and include later via [conf.include()](#confincludepath), to add directives prior to loading a config file.
 
 #### conf.define(parameter)
 
@@ -361,9 +362,9 @@ Emits the ['finished'](#event-finished) event and sets [conf.finished](#conffini
 
 #### conf.file
 
-- `<boolean>` | `<string>` | `<null>`
+*Deprecated in v0.2.2*
 
-Boolean, string, or null value that indicates whether Apache should load its default `httpd.conf` file (`true`|`null`), another config file (`string` path to config file), or no config at all (`false`).
+Use [conf.path](#confpath) instead.
 
 #### conf.finished
 
@@ -411,3 +412,9 @@ LoadModule status_module "modules/mod_status.so"
 ```
 
 See [Apache documentation](https://httpd.apache.org/docs/2.4/mod/core.html#include) for more details about the `LoadModule` directive.
+
+#### conf.path
+
+- `<boolean>` | `<string>` | `<null>`
+
+Boolean, string, or null value that indicates whether Apache should load its default `httpd.conf` file (`true`|`null`), another config file (`string` path to config file), or no config at all (`false`).
