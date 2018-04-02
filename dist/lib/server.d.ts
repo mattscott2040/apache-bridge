@@ -14,7 +14,6 @@ import conf = require('./conf');
  * Create a new Apache server.
  * @return {Server}
  * @param {Server~confListener} callback
- * @public
  */
 export declare const createServer: (callback?: ((conf: conf.Conf) => void) | undefined) => Server;
 /**
@@ -45,18 +44,16 @@ export declare class Server extends events.EventEmitter {
      * @param {null|Error} err - Null on success, Error on failure
      */
     /**
-    * Start Apache server.
-    * @param {number} [port=80]
-    * @param {string} [hostname=localhost]
-    * @param {Server~callback} [callback]
-    * @public
-    */
+     * Start Apache server.
+     * @param {number} [port=80]
+     * @param {string} [hostname=localhost]
+     * @param {Server~callback} [callback]
+     */
     listen(port?: number, hostname?: string, callback?: () => void): this | undefined;
     /**
-    * Stop Apache server.
-    * @param {Apache~callback} [callback]
-    * @return {Server}
-    * @public
-    */
+     * Stop Apache server.
+     * @param {Apache~callback} [callback]
+     * @return {Server}
+     */
     close(callback?: (err?: Error) => void): this;
 }

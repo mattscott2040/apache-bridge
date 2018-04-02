@@ -28,7 +28,6 @@ var ping = require("./ping");
  * Create a new Apache server.
  * @return {Server}
  * @param {Server~confListener} callback
- * @public
  */
 exports.createServer = function (callback) {
     return new Server(callback);
@@ -68,12 +67,11 @@ var Server = /** @class */ (function (_super) {
      * @param {null|Error} err - Null on success, Error on failure
      */
     /**
-    * Start Apache server.
-    * @param {number} [port=80]
-    * @param {string} [hostname=localhost]
-    * @param {Server~callback} [callback]
-    * @public
-    */
+     * Start Apache server.
+     * @param {number} [port=80]
+     * @param {string} [hostname=localhost]
+     * @param {Server~callback} [callback]
+     */
     Server.prototype.listen = function (port, hostname, callback) {
         var _this = this;
         if (port === void 0) { port = 80; }
@@ -265,11 +263,10 @@ var Server = /** @class */ (function (_super) {
         });
     };
     /**
-    * Stop Apache server.
-    * @param {Apache~callback} [callback]
-    * @return {Server}
-    * @public
-    */
+     * Stop Apache server.
+     * @param {Apache~callback} [callback]
+     * @return {Server}
+     */
     Server.prototype.close = function (callback) {
         var _this = this;
         var starting = this._starting;

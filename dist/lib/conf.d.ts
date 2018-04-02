@@ -22,8 +22,7 @@ export declare const createConf: (callback?: (() => void) | undefined) => Conf;
  * */
 export declare class Conf extends events.EventEmitter {
     private _arguments;
-    private _beforeConf;
-    private _directives;
+    private _includes;
     file: undefined | boolean | string | null;
     finished: boolean;
     /**
@@ -37,61 +36,77 @@ export declare class Conf extends events.EventEmitter {
      */
     constructor(callback?: () => void);
     /**
-    * Add a startup argument.
-    * @param {string} arg
-    * @param {string} [val]
-    */
-    addArgument(arg: string, val?: string): this;
+     * Alias for addArgument() - To be deprecated in v1.x
+     * @param {string} arg
+     * @param {string} [val]
+     * @return {Conf}
+     */
+    addArgument(arg: string, val?: string): Conf;
     /**
-    * Alias for getArguments() - To be deprecated in v1.x
-    * @public
-    */
+     * Add a startup argument.
+     * @param {string} arg
+     * @param {string} [val]
+     * @return {Conf}
+     * @private
+     */
+    _addArgument(arg: string, val?: string): Conf;
+    /**
+     * Alias for getArguments() - To be deprecated in v1.x
+     * @return {Conf}
+     * @return {array}
+     */
     toArray(): string[];
     /**
-    * Get startup arguments.
-    * @public
-    */
+     * Get startup arguments.
+     * @return {array}
+     */
     getArguments(): string[];
     /**
-     * Add a directive to load before main config file (-C flag) - To be deprecated in v1.x
+     * Alias for prependDirective() - To be deprecated in v1.x
      * @param {string} directive
-     * @public
+     * @return {Conf}
      */
     beforeConf: (directive: string) => Conf;
     /**
-    * Alias for addDirective() - To be deprecated in v1.x
-    * @public
-    */
+     * Add a directive to load before main config file (-C flag)
+     * @param {string} directive
+     * @return {Conf}
+     */
+    prependDirective: (directive: string) => Conf;
+    /**
+     * Alias for addDirective() - To be deprecated in v1.x
+     * @param {string} directive
+     * @return {Conf}
+     */
     afterConf: (directive: string) => Conf;
     /**
-    * Add a directive to load after main config file (-c flag).
-    * @param {string} directive
-    * @public
-    */
+     * Add a directive to load after main config file (-c flag).
+     * @param {string} directive
+     * @return {Conf}
+     */
     addDirective: (directive: string) => Conf;
     /**
-    * Define a parameter (-D flag).
-    * @param {string} parameter
-    * @public
-    */
+     * Define a parameter (-D flag).
+     * @param {string} parameter
+     * @return {Conf}
+     */
     define: (parameter: string) => Conf;
     /**
-    * Include a file (after main config).
-    * @param {string} file
-    * @public
-    */
+     * Include a file (after main config).
+     * @param {string} file
+     * @return {Conf}
+     */
     include: (file: string) => Conf;
     /**
-    * Load a module (after main config).
-    * @param {string} module
-    * @param {string} file
-    * @public
-    */
-    loadModule: (module: string, file: string) => Conf;
+     * Load a module (after main config).
+     * @param {string} module
+     * @param {string} file
+     * @return {Conf}
+     */
+    loadModule: (module: string, file?: string | undefined) => Conf;
     /**
-    * Stop configuring (and optionally append a directive).
-    * @param {string} [directive]
-    * @public
-    */
+     * Stop configuring (and optionally append a directive).
+     * @param {string} [directive]
+     */
     end: (directive?: string | undefined) => void;
 }

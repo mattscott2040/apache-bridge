@@ -52,89 +52,107 @@ var Conf = /** @class */ (function (_super) {
     function Conf(callback) {
         var _this = _super.call(this) || this;
         /**
-         * Add a directive to load before main config file (-C flag) - To be deprecated in v1.x
+         * Alias for prependDirective() - To be deprecated in v1.x
          * @param {string} directive
-         * @public
+         * @return {Conf}
          */
         _this.beforeConf = function (directive) {
+            return _this.prependDirective(directive);
+        };
+        /**
+         * Add a directive to load before main config file (-C flag)
+         * @param {string} directive
+         * @return {Conf}
+         */
+        _this.prependDirective = function (directive) {
             if (_this.finished) {
                 throw new Error('Could not add directive `' + directive + '`: Configuration cannot be edited after conf.end() has been called.');
             }
             if (directive) {
-                if (!_this._beforeConf) {
+                if (!_this._includes.C) {
                     var file = tmp.fileSync().name;
-                    _this._beforeConf = fs.createWriteStream(file);
-                    _this.addArgument('-C', 'Include ' + file)
-                        .on('finished', _this._beforeConf.close);
+                    _this._includes.C = fs.createWriteStream(file);
+                    _this._arguments.push('-C', '"Include \\"' + file + '\\""');
+                    _this.on('finished', function () {
+                        if (_this._includes.C) {
+                            _this._includes.C.close;
+                        }
+                    });
                 }
-                _this._beforeConf.write(directive + os.EOL);
+                _this._includes.C.write(directive + os.EOL);
             }
             return _this;
         };
         /**
-        * Alias for addDirective() - To be deprecated in v1.x
-        * @public
-        */
+         * Alias for addDirective() - To be deprecated in v1.x
+         * @param {string} directive
+         * @return {Conf}
+         */
         _this.afterConf = function (directive) {
             return _this.addDirective(directive);
         };
         /**
-        * Add a directive to load after main config file (-c flag).
-        * @param {string} directive
-        * @public
-        */
+         * Add a directive to load after main config file (-c flag).
+         * @param {string} directive
+         * @return {Conf}
+         */
         _this.addDirective = function (directive) {
             if (_this.finished) {
                 throw new Error('Could not add directive `' + directive + '`: Configuration cannot be edited after conf.end() has been called.');
             }
             if (directive) {
-                if (!_this._directives) {
+                if (!_this._includes.c) {
                     var file = tmp.fileSync().name;
-                    _this._directives = fs.createWriteStream(file);
-                    _this.addArgument('-c', 'Include "' + path.resolve(file) + '"')
-                        .on('finished', function () {
-                        if (_this._directives) {
-                            _this._directives.close;
+                    _this._includes.c = fs.createWriteStream(file);
+                    _this._arguments.push('-c', '"Include \\"' + file + '\\""');
+                    _this.on('finished', function () {
+                        if (_this._includes.c) {
+                            _this._includes.c.close;
                         }
                     });
                 }
-                _this._directives.write(directive + os.EOL);
+                _this._includes.c.write(directive + os.EOL);
             }
             return _this;
         };
         /**
-        * Define a parameter (-D flag).
-        * @param {string} parameter
-        * @public
-        */
+         * Define a parameter (-D flag).
+         * @param {string} parameter
+         * @return {Conf}
+         */
         _this.define = function (parameter) {
             return _this.addArgument('-D', parameter);
         };
         /**
-        * Include a file (after main config).
-        * @param {string} file
-        * @public
-        */
+         * Include a file (after main config).
+         * @param {string} file
+         * @return {Conf}
+         */
         _this.include = function (file) {
             return _this.addDirective('Include "' + path.resolve(file) + '"');
         };
         /**
-        * Load a module (after main config).
-        * @param {string} module
-        * @param {string} file
-        * @public
-        */
+         * Load a module (after main config).
+         * @param {string} module
+         * @param {string} file
+         * @return {Conf}
+         */
         _this.loadModule = function (module, file) {
+            if (!module) {
+                return _this;
+            }
+            if (!file) {
+                file = module.replace(/^(.*)_module$/, 'modules/mod_$1.so');
+            }
             return _this
                 .addDirective('<IfModule !' + module + '>')
                 .addDirective('LoadModule ' + module + ' "' + file + '"')
                 .addDirective('</IfModule>');
         };
         /**
-        * Stop configuring (and optionally append a directive).
-        * @param {string} [directive]
-        * @public
-        */
+         * Stop configuring (and optionally append a directive).
+         * @param {string} [directive]
+         */
         _this.end = function (directive) {
             if (directive) {
                 _this.addDirective(directive);
@@ -146,8 +164,10 @@ var Conf = /** @class */ (function (_super) {
             _this.emit('finished');
         };
         _this._arguments = [];
-        _this._beforeConf = null; // To be deprecated in v1.x
-        _this._directives = null;
+        _this._includes = {
+            C: null,
+            c: null
+        };
         _this.file;
         _this.finished = false;
         if (callback) {
@@ -156,12 +176,39 @@ var Conf = /** @class */ (function (_super) {
         return _this;
     }
     /**
-    * Add a startup argument.
-    * @param {string} arg
-    * @param {string} [val]
-    */
+     * Alias for addArgument() - To be deprecated in v1.x
+     * @param {string} arg
+     * @param {string} [val]
+     * @return {Conf}
+     */
     Conf.prototype.addArgument = function (arg, val) {
-        var allowedArgs = ['-d', '-f', '-C', '-c', '-D', '-e', '-E', '-T', '-X', '-k', '-n', '-w'];
+        return this._addArgument(arg, val);
+    };
+    /**
+     * Add a startup argument.
+     * @param {string} arg
+     * @param {string} [val]
+     * @return {Conf}
+     * @private
+     */
+    Conf.prototype._addArgument = function (arg, val) {
+        if (arg === '-c') {
+            if (val) {
+                return this.addDirective(val);
+            }
+            else {
+                return this;
+            }
+        }
+        if (arg === '-C') {
+            if (val) {
+                return this.prependDirective(val);
+            }
+            else {
+                return this;
+            }
+        }
+        var allowedArgs = ['-d', '-f', '-D', '-e', '-E', '-T', '-X', '-k', '-n', '-w'];
         var sanitizedVal;
         if (val) {
             sanitizedVal = capitalize(val.replace(/^-*(.*)$/, "$1").replace(/\"/g, '\\"'));
@@ -192,16 +239,17 @@ var Conf = /** @class */ (function (_super) {
         return this;
     };
     /**
-    * Alias for getArguments() - To be deprecated in v1.x
-    * @public
-    */
+     * Alias for getArguments() - To be deprecated in v1.x
+     * @return {Conf}
+     * @return {array}
+     */
     Conf.prototype.toArray = function () {
         return this.getArguments();
     };
     /**
-    * Get startup arguments.
-    * @public
-    */
+     * Get startup arguments.
+     * @return {array}
+     */
     Conf.prototype.getArguments = function () {
         var args = this._arguments;
         if (this.file === false) {
@@ -218,7 +266,7 @@ exports.Conf = Conf;
 /**
  * Capitalize a string.
  * @param {string} str
- * @public
+ * @return {string}
  */
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
