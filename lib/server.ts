@@ -19,7 +19,6 @@ import ping = require('./ping');
  * Create a new Apache server.
  * @return {Server}
  * @param {Server~confListener} callback
- * @public
  */
 
 export const createServer = (callback?: (conf: conf.Conf) => void): Server => {
@@ -75,12 +74,11 @@ export class Server extends events.EventEmitter {
      * @param {null|Error} err - Null on success, Error on failure
      */
 
-     /**
+    /**
      * Start Apache server.
      * @param {number} [port=80]
      * @param {string} [hostname=localhost]
      * @param {Server~callback} [callback]
-     * @public
      */
 
     listen (port = 80, hostname = 'localhost', callback?: () => void) {
@@ -301,11 +299,10 @@ export class Server extends events.EventEmitter {
 
     }
 
-     /**
+    /**
      * Stop Apache server.
      * @param {Apache~callback} [callback]
      * @return {Server}
-     * @public
      */
 
     close (callback?: (err?: Error) => void) {

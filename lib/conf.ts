@@ -74,10 +74,11 @@ export class Conf extends events.EventEmitter {
 
     }
 
-     /**
-     * Add a startup argument.
+    /**
+     * Alias for addArgument() - To be deprecated in v1.x
      * @param {string} arg
      * @param {string} [val]
+     * @return {Conf}
      */
 
     addArgument (arg: string, val?: string) {
@@ -148,18 +149,19 @@ export class Conf extends events.EventEmitter {
     
     }
     
-     /**
+    /**
      * Alias for getArguments() - To be deprecated in v1.x
-     * @public
+     * @return {Conf}
+     * @return {array}
      */
 
     toArray () {
         return this.getArguments();
     }
 
-     /**
+    /**
      * Get startup arguments.
-     * @public
+     * @return {array}
      */
 
     getArguments () {
@@ -174,7 +176,8 @@ export class Conf extends events.EventEmitter {
     
     /**
      * Alias for prependDirective() - To be deprecated in v1.x
-     * @public
+     * @param {string} directive
+     * @return {Conf}
      */
 
     beforeConf = (directive: string): Conf => {
@@ -184,7 +187,7 @@ export class Conf extends events.EventEmitter {
     /**
      * Add a directive to load before main config file (-C flag)
      * @param {string} directive
-     * @public
+     * @return {Conf}
      */
 
     prependDirective = (directive: string): Conf => {
@@ -199,27 +202,28 @@ export class Conf extends events.EventEmitter {
                 this.on('finished', () => {
                     if(this._includes.C) {
                         this._includes.C.close;
-            }
+                    }
                 });
-        }
+            }
             this._includes.C.write(directive + os.EOL);
         }
         return this;
     }
 
-     /**
+    /**
      * Alias for addDirective() - To be deprecated in v1.x
-     * @public
+     * @param {string} directive
+     * @return {Conf}
      */
 
     afterConf = (directive: string): Conf => {
         return this.addDirective(directive);
     }
 
-     /**
+    /**
      * Add a directive to load after main config file (-c flag).
      * @param {string} directive
-     * @public
+     * @return {Conf}
      */
 
     addDirective = (directive: string): Conf => {
@@ -242,44 +246,49 @@ export class Conf extends events.EventEmitter {
         return this;
     }
 
-     /**
+    /**
      * Define a parameter (-D flag).
      * @param {string} parameter
-     * @public
+     * @return {Conf}
      */
 
     define = (parameter: string): Conf => {
         return this.addArgument('-D', parameter);
     }
 
-     /**
+    /**
      * Include a file (after main config).
      * @param {string} file
-     * @public
+     * @return {Conf}
      */
 
     include = (file: string): Conf => {
         return this.addDirective('Include "' + path.resolve(file) + '"');
     }
 
-     /**
+    /**
      * Load a module (after main config).
      * @param {string} module
      * @param {string} file
-     * @public
+     * @return {Conf}
      */
 
-    loadModule = (module: string, file: string): Conf => {
+    loadModule = (module: string, file?: string): Conf => {
+        if(!module) {
+            return this;
+        }
+        if(!file) {
+            file = module.replace(/^(.*)_module$/, 'modules/mod_$1.so');
+        }
         return this
             .addDirective('<IfModule !' + module + '>')
             .addDirective('LoadModule ' + module + ' "' + file + '"')
             .addDirective('</IfModule>')
     }
 
-     /**
+    /**
      * Stop configuring (and optionally append a directive).
      * @param {string} [directive]
-     * @public
      */
 
     end = (directive?: string) => {
@@ -298,7 +307,7 @@ export class Conf extends events.EventEmitter {
 /**
  * Capitalize a string.
  * @param {string} str
- * @public
+ * @return {string}
  */
 
 function capitalize(str: string) {
