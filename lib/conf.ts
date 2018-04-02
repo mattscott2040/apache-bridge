@@ -38,8 +38,10 @@ export const createConf = (callback?: () => void): Conf => {
 export class Conf extends events.EventEmitter {
 
     private _arguments: Array<string>;
-    private _beforeConf: null|fs.WriteStream; // To be deprecated in v1.x
-    private _directives: null|fs.WriteStream;
+    private _includes: {
+        C: null|fs.WriteStream,
+        c: null|fs.WriteStream
+    };
 
     file: undefined|boolean|string|null;
     finished: boolean;
@@ -59,8 +61,10 @@ export class Conf extends events.EventEmitter {
 
         super();
         this._arguments = [];
-        this._beforeConf = null; // To be deprecated in v1.x
-        this._directives = null;
+        this._includes = {
+            C: null,
+            c: null
+        };
         this.file;
         this.finished = false;
 
@@ -77,8 +81,36 @@ export class Conf extends events.EventEmitter {
      */
 
     addArgument (arg: string, val?: string) {
+        return this._addArgument(arg, val);
+    }
 
-        const allowedArgs = ['-d','-f','-C','-c','-D','-e','-E','-T','-X','-k','-n','-w'];
+    /**
+     * Add a startup argument.
+     * @param {string} arg
+     * @param {string} [val]
+     * @return {Conf}
+     * @private
+     */
+
+    _addArgument (arg: string, val?: string) {
+
+        if(arg === '-c') {
+            if(val) {
+                return this.addDirective(val);
+            } else {
+                return this;
+            }
+        }
+
+        if(arg === '-C') {
+            if(val) {
+                return this.prependDirective(val);
+            } else {
+                return this;
+            }
+        }
+
+        const allowedArgs = ['-d','-f','-D','-e','-E','-T','-X','-k','-n','-w'];
         let sanitizedVal;
 
         if(val) {
@@ -141,23 +173,36 @@ export class Conf extends events.EventEmitter {
     }
     
     /**
-     * Add a directive to load before main config file (-C flag) - To be deprecated in v1.x
-     * @param {string} directive
+     * Alias for prependDirective() - To be deprecated in v1.x
      * @public
      */
 
     beforeConf = (directive: string): Conf => {
+        return this.prependDirective(directive);
+    }
+
+    /**
+     * Add a directive to load before main config file (-C flag)
+     * @param {string} directive
+     * @public
+     */
+
+    prependDirective = (directive: string): Conf => {
         if(this.finished) {
             throw new Error('Could not add directive `' + directive + '`: Configuration cannot be edited after conf.end() has been called.');
         }
         if(directive) {
-            if(!this._beforeConf) {
+            if(!this._includes.C) {
                 let file = tmp.fileSync().name;
-                this._beforeConf = fs.createWriteStream(file);
-                this.addArgument('-C', 'Include ' + file)
-                    .on('finished', this._beforeConf.close);
+                this._includes.C = fs.createWriteStream(file);
+                this._arguments.push('-C', '"Include \\"' + file + '\\""');
+                this.on('finished', () => {
+                    if(this._includes.C) {
+                        this._includes.C.close;
             }
-            this._beforeConf.write(directive + os.EOL);
+                });
+        }
+            this._includes.C.write(directive + os.EOL);
         }
         return this;
     }
@@ -182,17 +227,17 @@ export class Conf extends events.EventEmitter {
             throw new Error('Could not add directive `' + directive + '`: Configuration cannot be edited after conf.end() has been called.');
         }
         if(directive) {
-            if(!this._directives) {
+            if(!this._includes.c) {
                 let file = tmp.fileSync().name;
-                this._directives = fs.createWriteStream(file);
-                this.addArgument('-c', 'Include "' + path.resolve(file) + '"')
-                    .on('finished', () => {
-                        if(this._directives) {
-                            this._directives.close;
+                this._includes.c = fs.createWriteStream(file);
+                this._arguments.push('-c', '"Include \\"' + file + '\\""');
+                this.on('finished', () => {
+                    if(this._includes.c) {
+                        this._includes.c.close;
                         }
                     });
             }
-            this._directives.write(directive + os.EOL);
+            this._includes.c.write(directive + os.EOL);
         }
         return this;
     }

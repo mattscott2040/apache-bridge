@@ -24,7 +24,7 @@
    * [apache.createConf([finishedListener])](#apachecreateconffinishedlistener)
    * [Class: apache.Conf](#class-apacheconf)
      * [Event: 'finished'](#event-finished)
-     * [conf.addArgument(argument, value)](#confaddargumentargument-value)
+     * ~~[conf.addArgument(argument, value)](#confaddargumentargument-value)~~ - *To be deprecrated in v1.x.x*
      * [conf.addDirective(directive)](#confadddirectivedirective)
      * ~~[conf.afterConf(directive)](#confafterconfdirective)~~ - *To be deprecrated in v1.x.x*
      * ~~[conf.beforeConf(directive)](#confafterconfdirective)~~ - *To be deprecrated in v1.x.x*
@@ -34,6 +34,7 @@
      * [conf.finished](#conffinished)
      * [conf.include(path)](#confincludepath)
      * [conf.loadModule(moduleName, modulePath)](#confloadmodulemodulename-modulepath)
+     * [conf.prependDirective(directive)](#confprependdirectivedirective)
 
 ## Background
 
@@ -266,40 +267,16 @@ This class is used to configure Apache.
 
 Emitted after [conf.end()](#confenddirective) is called.
 
-#### conf.addArgument(argument[, value])
+#### ~~conf.addArgument(argument[, value])~~
 
-- `argument` `<string>`
-  - Allowed flags: `-d`, `-f`, `-C`, `-c`, `-D`, `-e`, `-E`, `-T`,`-X`,`-k`, `-n`, `-w`
-- `value` `<string>`
-- Returns: `<apache.Conf>`
+*To be deprecated in v1.x.x.*
 
-Add `argument` with optional `value` to the `httpd` process at runtime:
+This method adds arguments to the `httpd` process at runtime. To minimize the number of runtime arguments and to avoid having to escape complex directives, directives are now added to temporary `Include` files via the [conf.prependDirective()](#confprependdirectivedirective) and [conf.addDirective()](#confadddirectivedirective) methods. Use the following methods (or property) instead of the corresponding runtime arguments:
 
-```javascript
-// addArgument()
-conf.addArgument('-c', 'Include /path/to/include/file.conf');
-```
-
-```bash
-# Command-line
-$ httpd -c "Include /path/to/include/file.conf"
-```
-
-*Note*: `value` will be wrapped in double-quotes. Any double-quotes in the provided `value` string will be automatically escaped:
-
-This:
-
-```javascript
-conf.addArgument('-C', '<If "%{HTTP_HOST} == \'example.com\'">');
-```
-
-will be converted to this:
-
-```bash
-$ httpd -C "<If \"%{HTTP_HOST} == 'example.com'\">"
-```
-
-See [Apache documentation](https://httpd.apache.org/docs/2.4/programs/httpd.html) for more details about runtime arguments.
+  - `-f`: [conf.file](#conffile)
+  - `-c`: [conf.addDirective()](#confadddirectivedirective)
+  - `-C`: [conf.prependDirective()](#confprependdirectivedirective)
+  - `-D`: [conf.define()](#confdefineparameter)
 
 #### conf.addDirective(directive)
 
@@ -320,7 +297,7 @@ Use [conf.addDirective()](#confadddirectivedirective) instead.
 
 *To be deprecated in v1.x.x.*
 
-Use [conf.addDirective()](#confadddirectivedirective) instead. Use [conf.addArgument()](#confaddargumentargument-value) with `-C` argument, or alternatively set [conf.file](#conffile) to `false` and include later via [conf.include()](#confincludepath), to add directives prior to loading a config file.
+Use [conf.prependDirective()](#confprependdirectivedirective) instead.
 
 #### conf.define(parameter)
 
@@ -411,3 +388,12 @@ LoadModule status_module "modules/mod_status.so"
 ```
 
 See [Apache documentation](https://httpd.apache.org/docs/2.4/mod/core.html#include) for more details about the `LoadModule` directive.
+
+#### conf.prependDirective(directive)
+
+- `directive` `<string>`
+- Returns: `<apache.Conf>`
+
+Process the configuration `directive` before reading [conf.file](#conffile).
+
+See [Apache documentation](https://httpd.apache.org/docs/2.4/mod/core.html) for more details about configuration directives.
