@@ -71,12 +71,12 @@ var Server = /** @class */ (function (_super) {
      * @param {number} [port=80]
      * @param {string} [hostname=localhost]
      * @param {Server~callback} [callback]
+     * @return {Server}
      */
     Server.prototype.listen = function (port, hostname, callback) {
         var _this = this;
         if (port === void 0) { port = 80; }
         if (hostname === void 0) { hostname = 'localhost'; }
-        var self = this;
         var run;
         var autolisten = true; // Add Listen directive
         // Restart if already running
@@ -261,6 +261,7 @@ var Server = /** @class */ (function (_super) {
                 }
             }
         });
+        return this;
     };
     /**
      * Stop Apache server.

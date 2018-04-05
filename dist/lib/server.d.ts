@@ -48,8 +48,9 @@ export declare class Server extends events.EventEmitter {
      * @param {number} [port=80]
      * @param {string} [hostname=localhost]
      * @param {Server~callback} [callback]
+     * @return {Server}
      */
-    listen(port?: number, hostname?: string, callback?: () => void): this | undefined;
+    listen(port?: number, hostname?: string, callback?: () => void): this;
     /**
      * Stop Apache server.
      * @param {Apache~callback} [callback]

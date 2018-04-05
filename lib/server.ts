@@ -79,12 +79,11 @@ export class Server extends events.EventEmitter {
      * @param {number} [port=80]
      * @param {string} [hostname=localhost]
      * @param {Server~callback} [callback]
+     * @return {Server}
      */
 
     listen (port = 80, hostname = 'localhost', callback?: () => void) {
         
-        const self = this;
-
         let run: () => void;
         let autolisten = true; // Add Listen directive
 
@@ -297,6 +296,7 @@ export class Server extends events.EventEmitter {
             }
         });
 
+        return this;
     }
 
     /**
